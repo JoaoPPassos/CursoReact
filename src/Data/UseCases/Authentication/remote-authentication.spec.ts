@@ -1,4 +1,7 @@
-import { mockAuthentication } from "@/Domain/Test/mock-authentication";
+import {
+  mockAccountModel,
+  mockAuthentication,
+} from "@/Domain/Test/mock-account";
 import { HttpPostClientSpy } from "@/Data/Test/mock-http-client";
 import { RemoteAuthentication } from "./remote-authentication";
 import { faker } from "@faker-js/faker";
@@ -60,11 +63,16 @@ describe("RemoteAuthentication", () => {
     await expect(promise).rejects.toThrow(new UnexpectedError());
   });
 
-  test("Should be truthy on success", async () => {
+  test("Should return AccountModel on success", async () => {
     const { sut, httpPostClientSpy } = makeSut();
+    const httpResult = mockAccountModel();
+    httpPostClientSpy.response = {
+      statusCode: HttpStatusCode.OK,
+      body: httpResult,
+    };
     const authentication = mockAuthentication();
-    const promise = sut.auth(authentication);
+    const account = await sut.auth(authentication);
 
-    await expect(promise).toBeTruthy();
+    expect(account).toEqual(httpResult);
   });
 });
