@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { AuthenticationParams } from "../UseCases/authentication";
+import { AuthenticationParams } from "@/Domain/UseCases/authentication";
 
 export const mockAuthentication = (): AuthenticationParams => ({
   email: faker.internet.email.toString(),

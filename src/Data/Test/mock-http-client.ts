@@ -1,7 +1,7 @@
 import {
   HttpPostClient,
   HttpPostParams,
-} from "../Protocols/Http/http-post-client";
+} from "@/Data/Protocols/Http/http-post-client";
 
 export class HttpPostClientSpy implements HttpPostClient {
   url?: string;
