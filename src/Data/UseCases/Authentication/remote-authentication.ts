@@ -2,6 +2,7 @@ import { AuthenticationParams } from "@/Domain/UseCases/authentication";
 import { HttpPostClient } from "@/Data/Protocols/Http/http-post-client";
 import { HttpStatusCode } from "@/Data/Protocols/Http/http-response";
 import { InvalidCredentialError } from "@/Domain/Errors/invalid-credentials-error";
+import { UnexpectedError } from "@/Domain/Errors/unexpected-error";
 
 export class RemoteAuthentication {
   constructor(
@@ -17,7 +18,14 @@ export class RemoteAuthentication {
 
     if (httpResponse.statusCode === HttpStatusCode.UNAUTHORIZED)
       throw new InvalidCredentialError();
-
+    if (
+      [
+        HttpStatusCode.NO_CONTENT,
+        HttpStatusCode.NOT_FOUND,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      ].includes(httpResponse.statusCode)
+    )
+      throw new UnexpectedError();
     return Promise.resolve();
   }
 }
