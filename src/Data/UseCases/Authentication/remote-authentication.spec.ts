@@ -4,6 +4,7 @@ import { RemoteAuthentication } from "./remote-authentication";
 import { faker } from "@faker-js/faker";
 import { InvalidCredentialError } from "@/Domain/Errors/invalid-credentials-error";
 import { HttpStatusCode } from "@/Data/Protocols/Http/http-response";
+import { UnexpectedError } from "@/Domain/Errors/unexpected-error";
 
 type SutTypes = {
   sut: RemoteAuthentication;
@@ -41,5 +42,16 @@ describe("RemoteAuthentication", () => {
     const promise = sut.auth(authentication);
 
     await expect(promise).rejects.toThrow(new InvalidCredentialError());
+  });
+
+  test("Should return UnexpectedError message if HttpPostClient returns other than 401", async () => {
+    const { sut, httpPostClientSpy } = makeSut();
+    httpPostClientSpy.response = {
+      statusCode: HttpStatusCode.NOT_FOUND,
+    };
+    const authentication = mockAuthentication();
+    const promise = sut.auth(authentication);
+
+    await expect(promise).rejects.toThrow(new UnexpectedError());
   });
 });
